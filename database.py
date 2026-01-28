@@ -4,7 +4,7 @@ import re
 import bcrypt
 
 #establish a connection between my code and my database in sqlite personal
-connection = sqlite3.connect("C:\\Users\\Ryan\\OneDrive - Cardinal Vaughan Memorial School\\NEA\\database.db")
+connection = sqlite3.connect("/mnt/c/Users/Ryan/OneDrive - University of Cambridge/SixthForm/NEA/database.db")
 #establish a cursor object to allow me to perform actions remotely on my database
 cursor = connection.cursor()
 
@@ -78,7 +78,7 @@ def createTables():
 def addUser(username: str, hashedPass: str, companyID: str):
     #establish a connection between my code and my database
     #establish a cursor object to allow me to perform actions remotely on my database
-    connection = sqlite3.connect("C:\\Users\\Ryan\\OneDrive - Cardinal Vaughan Memorial School\\NEA\\database.db")
+    connection = sqlite3.connect("/mnt/c/Users/Ryan/OneDrive - University of Cambridge/SixthForm/NEA/database.db")
     cursor = connection.cursor()
     query = """ INSERT INTO tblUsers (Username, HashedPassword, CompanyID) 
                 VALUES (?, ?, ?)"""
@@ -90,7 +90,7 @@ def addUser(username: str, hashedPass: str, companyID: str):
 def checkCompany():
     #establish a connection between my code and my database
     #establish a cursor object to allow me to perform actions remotely on my database
-    connection = sqlite3.connect("C:\\Users\\Ryan\\OneDrive - Cardinal Vaughan Memorial School\\NEA\\database.db")
+    connection = sqlite3.connect("/mnt/c/Users/Ryan/OneDrive - University of Cambridge/SixthForm/NEA/database.db")
     cursor = connection.cursor()
     query = """ SELECT Name, CEO, CompanyID
                 FROM tblCompany """
@@ -102,7 +102,7 @@ def checkCompany():
 def getWatchlist(username:str):
     #establish a connection between my code and my database
     #establish a cursor object to allow me to perform actions remotely on my database
-    connection = sqlite3.connect("C:\\Users\\Ryan\\OneDrive - Cardinal Vaughan Memorial School\\NEA\\database.db")
+    connection = sqlite3.connect("/mnt/c/Users/Ryan/OneDrive - University of Cambridge/SixthForm/NEA/database.db")
     cursor = connection.cursor()
     query = """ SELECT tblWLDetails.Ticker
                 FROM tblWLDetails, tblUsers
@@ -122,7 +122,7 @@ def getWatchlist(username:str):
 def addCrypto(ticker, timePeriod, analysis ):
     #establish a connection between my code and my database
     #establish a cursor object to allow me to perform actions remotely on my database
-    connection = sqlite3.connect("C:\\Users\\Ryan\\OneDrive - Cardinal Vaughan Memorial School\\NEA\\database.db")
+    connection = sqlite3.connect("/mnt/c/Users/Ryan/OneDrive - University of Cambridge/SixthForm/NEA/database.db")
     cursor = connection.cursor()
 
     #select all tickers from table crypto
@@ -144,7 +144,7 @@ def addCrypto(ticker, timePeriod, analysis ):
 def addCompany(companyName, CEOname):
     #establish a connection between my code and my database
     #establish a cursor object to allow me to perform actions remotely on my database
-    connection = sqlite3.connect("C:\\Users\\Ryan\\OneDrive - Cardinal Vaughan Memorial School\\NEA\\database.db")
+    connection = sqlite3.connect("/mnt/c/Users/Ryan/OneDrive - University of Cambridge/SixthForm/NEA/database.db")
     cursor = connection.cursor()
     query = """ INSERT INTO tblCompany (Name, CEO) 
                 VALUES (?, ?)"""
@@ -156,7 +156,7 @@ def addCompany(companyName, CEOname):
 def updateWatchListDetails(username, ticker, add:bool):
     #establish a connection between my code and my database
     #establish a cursor object to allow me to perform actions remotely on my database
-    connection = sqlite3.connect("C:\\Users\\Ryan\\OneDrive - Cardinal Vaughan Memorial School\\NEA\\database.db")
+    connection = sqlite3.connect("/mnt/c/Users/Ryan/OneDrive - University of Cambridge/SixthForm/NEA/database.db")
     cursor = connection.cursor()
     query1 = """SELECT tblWLDetails.UserID, tblWLDetails.Ticker
                 FROM tblWLDetails, tblUsers
@@ -191,7 +191,7 @@ def updateWatchListDetails(username, ticker, add:bool):
 def checkUser():
     #establish a connection between my code and my database
     #establish a cursor object to allow me to perform actions remotely on my database
-    connection = sqlite3.connect("C:\\Users\\Ryan\\OneDrive - Cardinal Vaughan Memorial School\\NEA\\database.db")
+    connection = sqlite3.connect("/mnt/c/Users/Ryan/OneDrive - University of Cambridge/SixthForm/NEA/database.db")
     cursor = connection.cursor()
     query = """ SELECT Username
                 FROM tblUsers """
@@ -203,7 +203,7 @@ def checkUser():
 def checkTrades(ticker):
     #establish a connection between my code and my database
     #establish a cursor object to allow me to perform actions remotely on my database
-    connection = sqlite3.connect("C:\\Users\\Ryan\\OneDrive - Cardinal Vaughan Memorial School\\NEA\\database.db")
+    connection = sqlite3.connect("/mnt/c/Users/Ryan/OneDrive - University of Cambridge/SixthForm/NEA/database.db")
     cursor = connection.cursor()
     query = """ SELECT Analysis, TimePeriod
                 FROM tblCrypto
@@ -217,7 +217,7 @@ def checkTrades(ticker):
 def checkPass():
     #establish a connection between my code and my database
     #establish a cursor object to allow me to perform actions remotely on my database
-    connection = sqlite3.connect("C:\\Users\\Ryan\\OneDrive - Cardinal Vaughan Memorial School\\NEA\\database.db")
+    connection = sqlite3.connect("/mnt/c/Users/Ryan/OneDrive - University of Cambridge/SixthForm/NEA/database.db")
     cursor = connection.cursor()
     query = """ SELECT Username, HashedPassword
                 FROM tblUsers """
@@ -231,7 +231,7 @@ def checkPass():
 def trendingWatchlist(username:str, company:bool):
     #establish a connection between my code and my database
     #establish a cursor object to allow me to perform actions remotely on my database
-    connection = sqlite3.connect("C:\\Users\\Ryan\\OneDrive - Cardinal Vaughan Memorial School\\NEA\\database.db")
+    connection = sqlite3.connect("/mnt/c/Users/Ryan/OneDrive - University of Cambridge/SixthForm/NEA/database.db")
     cursor = connection.cursor()
     #the user's username will be made an attribute in the large class so is easily accessible
     #use a query to find the company ID of the user
@@ -325,7 +325,7 @@ def trendingWatchlist(username:str, company:bool):
 def addNews(ticker, headline, sentiment, time, date):
     #establish a connection between my code and my database
     #establish a cursor object to allow me to perform actions remotely on my database
-    connection = sqlite3.connect("C:\\Users\\Ryan\\OneDrive - Cardinal Vaughan Memorial School\\NEA\\database.db")
+    connection = sqlite3.connect("/mnt/c/Users/Ryan/OneDrive - University of Cambridge/SixthForm/NEA/database.db")
     cursor = connection.cursor()
     query = """ INSERT INTO tblNews (Ticker, Headline, Time, Date, Sentiment) 
                 VALUES (?, ?, ?,?, ?)"""
@@ -338,7 +338,7 @@ def addNews(ticker, headline, sentiment, time, date):
 def checkNews(ticker:str, headline:str):
     #establish a connection between my code and my database
     #establish a cursor object to allow me to perform actions remotely on my database
-    connection = sqlite3.connect("C:\\Users\\Ryan\\OneDrive - Cardinal Vaughan Memorial School\\NEA\\database.db")
+    connection = sqlite3.connect("/mnt/c/Users/Ryan/OneDrive - University of Cambridge/SixthForm/NEA/database.db")
     cursor = connection.cursor()
     query = f""" SELECT tblNews.Ticker, tblNews.Headline
                  FROM tblNews
@@ -353,7 +353,7 @@ def checkNews(ticker:str, headline:str):
 def extractNews(ticker,sentiment):
     #establish a connection between my code and my database
     #establish a cursor object to allow me to perform actions remotely on my database
-    connection = sqlite3.connect("C:\\Users\\Ryan\\OneDrive - Cardinal Vaughan Memorial School\\NEA\\database.db")
+    connection = sqlite3.connect("/mnt/c/Users/Ryan/OneDrive - University of Cambridge/SixthForm/NEA/database.db")
     cursor = connection.cursor()
     query = f"""SELECT tblNews.Headline
                 FROM tblNews

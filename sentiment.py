@@ -7,80 +7,42 @@ import math
 #importing functions from my other file
 from database import addNews, checkNews
 
-#function definition to get headlines and the date / time of when each article was published 
-def getHeadlines(tickers:list):
+import feedparser
+from dateutil.parser import parse
 
-    #initialise empty lists to feed processed data into
+def getHeadlines(tickers: list):
+    """
+    Scrapes latest news headlines and their date/time from Yahoo Finance RSS feeds.
+    Returns three lists: headlines, dates, times.
+    """
     headlines, dates, times = [], [], []
 
-    #loops through each ticker passed in the function
     for ticker in tickers:
-        #adjusts the url for each ticker
-        tickerURL = f"https://finance.yahoo.com/quote/{ticker}-USD/latest-news/"
-        #set headers to stop the server rejecting my request or limiting the number of requests
-        headers = {
-                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                    "Accept-Language": "en-US,en;q=0.9",
-                    "Referer": "https://www.google.com/",
-                    "DNT": "1", 
-                    "Connection": "keep-alive",
-                    "Cache-Control": "no-cache",
-                }
+        # Construct Yahoo Finance RSS feed URL
+        rss_url = f"https://finance.yahoo.com/rss/{ticker}-USD"
+        feed = feedparser.parse(rss_url)
 
-        #get the html and find all cases of the specific class that holds the headlines
-        newsResponse = requests.get(tickerURL, headers=headers)
-        newsSoup = BeautifulSoup(newsResponse.content,'html.parser')
-        #I had to go on the website and inspect the html manually to find the class I wanted
-        news = newsSoup.findAll('h3',class_='clamp yf-82qtw3')
+        if 'entries' not in feed or len(feed.entries) == 0:
+            print(f"No RSS feed found for {ticker}")
+            continue
 
-        #do the same thing for the links for each headline - the only way I can access the date and time
-        links = newsSoup.findAll('a', class_='subtle-link fin-size-small titles noUnderline yf-1xqzjha')
-        #list comprehension to find all the href instances in the class
-        newsURLS = [link["href"] for link in links] 
+        for entry in feed.entries:
+            title = entry.get('title', '').strip()
+            if not title or title in headlines:
+                continue  # skip empty or duplicate headlines
+            headlines.append(title)
 
-        #loops through each url in the list and requests each of those html soups
-        #this had to be done because on the latest news page, the exact date time was not given,
-        #so I had to basically "press" each headlines to go to the full article, request the html for the
-        #full articles, and then extract the datetime object I wanted, all in this single loop
-        for url in newsURLS:
-                #request each articles full html soup
-                response = requests.get(url, headers=headers)
-                soup = BeautifulSoup(response.content,'html.parser')
-                #find the insance of the class holding the timestamp
-                timeStamps = soup.findAll('time',class_='byline-attr-meta-time')
+            published = entry.get('published', None)
+            if published:
+                dt = parse(published)
+                dates.append(dt.date())  # datetime.date object
+                times.append(dt.time())  # datetime.time object
+            else:
+                dates.append(None)
+                times.append(None)
 
-                #for each tag in the list given back, it holds a datetime object, which I converted
-                #into python datetime, and then seperated into date and time seperately
-                for tag in timeStamps:
-                    stringObject =tag["datetime"]  
-                    dateObject = datetime.strptime(stringObject, "%Y-%m-%dT%H:%M:%S.%fZ")
-                    #append date part of datetime to a list
-                    dates.append(dateObject.date())
-                    #append time part of datetime to a list
-                    times.append(dateObject.time())
-                
-
-        #each headline is returned in an unwanted format 
-        #so I used string slicing to only take the exact part of the headline I need
-        #without any of the surrouding class data
-        for headline in news:
-                #where the slice will begin
-                startIndex = str(headline).find(">") + 1
-                #where the slice will end
-                endIndex = str(headline).rfind("<")
-                #slice it and store as a string data type
-                headline = str(headline)[startIndex:endIndex]  
-                #if there in no headline, or it is repeated for some reason, do not append
-                if headline in headlines:
-                        pass
-                elif headline == []:
-                        pass
-                #otherwise append to final list
-                else:
-                    headlines.append(headline)    
-        
-    #return each list
     return headlines, dates, times
+
 
 
 #function definition that will return sentiments for each headline for any tickers

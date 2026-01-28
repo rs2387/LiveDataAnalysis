@@ -410,5 +410,5 @@ class CandlesApp(tk.Tk):
 
 if __name__ == "__main__":
     #calls the class and runs it with the given parameters
-    app = CandlesApp("15m", "KAITOUSDT", False)
+    app = CandlesApp("15m", "BTCUSDT", False)
     app.mainloop()

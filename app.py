@@ -3,7 +3,6 @@ import customtkinter as ctk
 import sys
 import requests
 import random
-from bs4 import BeautifulSoup
 #importing functions from my other files
 from database import addUser, checkUser, checkPass, validPass, hashPass, verifyPass, updateWatchListDetails
 from database import addCompany, checkCompany, trendingWatchlist, extractNews, getWatchlist
@@ -11,6 +10,7 @@ from api import getCustomCandles
 from sentiment import recent10
 #importing a class from my other file
 from graph import CandlesApp
+import yfinance as yf
 
 
 #list of all the tickers that are USDT tickers from the uk binance website
@@ -233,77 +233,52 @@ class CryptoApp:
         #top 3 outside the company
         top3tickers = trendingWatchlist(self.username, inCompany)
 
-        #for each ticker in the top3 tickers
+
+
+        # for each ticker in the top3 tickers
         for i in range(3):
-                
-                #remove the suffix usdt to get it ready for the url
-                coin = top3tickers[i].removesuffix("USDT")
+            # remove the suffix USDT to get it ready for the URL / yfinance ticker
+            coin = top3tickers[i].removesuffix("USDT")
 
-                #use an f string to get the url I need for each ticker
-                tickerURL = f"https://finance.yahoo.com/quote/{coin}-USD/"
-                #use headers to stop the server rejecting my request or limitting it
-                headers = {
-                            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-                            "Accept-Language": "en-US,en;q=0.9",
-                            "Referer": "https://www.google.com/",
-                            "DNT": "1", 
-                            "Connection": "keep-alive",
-                            "Cache-Control": "no-cache",
-                        }
-                
-                #use requests to get the data from the url I just concatenated
-                tickerResponse = requests.get(tickerURL, headers=headers)
-                #pass it through a parser to collect html data
-                tickersSoup = BeautifulSoup(tickerResponse.content,'html.parser')
-                #split the data into certain sections finding the classes with the relevant info
-                html1 = tickersSoup.findAll('span',class_='base txt-positive yf-ipw1h0')
-                #both these classes had to be found manualy by inspecting the html on the website
-                #the only disadvantage is that they might change with time 
-                html2 = tickersSoup.findAll('span',class_='base txt-negative yf-ipw1h0')
+            # construct Yahoo Finance ticker
+            yf_ticker = f"{coin}-USD"
 
-                #there may be no results for either, so this error checker is used to 
-                #make the program more robust
+            # fetch data using yfinance
+            data = yf.Ticker(yf_ticker).info
+
+            # percentage change of the day
+            # regularMarketChangePercent is in decimal, so we multiply by 100 to match original formatting
+            percentage = data.get("regularMarketChangePercent", None)
+            if percentage is not None:
+                percentage = round(percentage, 2)  # round to 2 decimal places
+            else:
+                percentage = "N/A"
+
+            count =0
+            while count < 1:
+                #extract positive and negative headlines for each by calling a function to access the database
+                positiveNews = extractNews(top3tickers[i], "Positive")
+                negativeNews = extractNews(top3tickers[i], "Negative")
+                #out of all the available headlines, I randomly take one of each using random library and list indexing
                 try:
-                    #try slice the list
-                    x = html1[1]
+                    positiveHeadline= positiveNews[random.randint(0, (len(positiveNews)-1))]
+                    negativeHeadline = negativeNews[random.randint(0, (len(negativeNews)-1))]
+                    break
                 except:
-                    #slice the second list since the first is empty which is why it raises an error
-                    x = html2[1]
+                    recent10([top3tickers[i]])
+                    positiveHeadline, negativeHeadline = "None", "None"
+                    count +=1
+            #create label to dislay the ticker and its percentage change in the day
+            ctk.CTkLabel(companyTrendingFrame, text=top3tickers[i]+' ' +str(percentage)+"%", font=("Helvetica", 14, "bold"), text_color="white").pack( pady=3)
+            #creates a button to add any of the trending tickers to your watchlist, and will call a function to update the details in the database
+            ctk.CTkButton(companyTrendingFrame,command=lambda: updateWatchListDetails(self.username, top3tickers[i],
+                            add=True), text="Add to Watchlist", font=("Helvetica", 6), width=10, height=10, fg_color="purple",
+                            hover_color="darkviolet", text_color="white",border_width=1, border_color="gold").place(relx=0.7, rely=0.15+0.287*i)
+            #I also had to use the place function to position it to line up with each ticker so it will be moved down relative to each tickers position (i)
 
-                #I need to select the relevant part of the data I want, so I used some string slicing
-                #the start index will be the index after a ">" 
-                startIndex = str(x).find(">") + 1 #+1 because its inclusive
-                #the end index will be the final "<"
-                endIndex = str(x).rfind("<")
-                #slice the data and store it as a string data type
-                #in this case the data is the percentage change of the day
-                percentage = str(x)[startIndex:endIndex]  
-
-                count =0
-                while count < 1:
-                    #extract positive and negative headlines for each by calling a function to access the database
-                    positiveNews = extractNews(top3tickers[i], "Positive")
-                    negativeNews = extractNews(top3tickers[i], "Negative")
-                    #out of all the available headlines, I randomly take one of each using random library and list indexing
-                    try:
-                        positiveHeadline= positiveNews[random.randint(0, (len(positiveNews)-1))]
-                        negativeHeadline = negativeNews[random.randint(0, (len(negativeNews)-1))]
-                        break
-                    except:
-                        recent10([top3tickers[i]])
-                        positiveHeadline, negativeHeadline = "None", "None"
-                        count +=1
-                #create label to dislay the ticker and its percentage change in the day
-                ctk.CTkLabel(companyTrendingFrame, text=top3tickers[i]+' ' +percentage, font=("Helvetica", 14, "bold"), text_color="white").pack( pady=3)
-                #creates a button to add any of the trending tickers to your watchlist, and will call a function to update the details in the database
-                ctk.CTkButton(companyTrendingFrame,command=lambda: updateWatchListDetails(self.username, top3tickers[i],
-                                add=True), text="Add to Watchlist", font=("Helvetica", 6), width=10, height=10, fg_color="purple",
-                                hover_color="darkviolet", text_color="white",border_width=1, border_color="gold").place(relx=0.7, rely=0.15+0.287*i)
-                #I also had to use the place function to position it to line up with each ticker so it will be moved down relative to each tickers position (i)
-
-                #creates another 2 labels to write in each headline, green for positive, red for negative
-                ctk.CTkLabel(companyTrendingFrame, text=positiveHeadline, text_color="green", font=("Helvetica", 12, "bold"), wraplength=325).pack(pady=2)
-                ctk.CTkLabel(companyTrendingFrame, text=negativeHeadline, text_color="red", font=("Helvetica", 12, "bold"), wraplength=325).pack(pady=2)
+            #creates another 2 labels to write in each headline, green for positive, red for negative
+            ctk.CTkLabel(companyTrendingFrame, text=positiveHeadline, text_color="green", font=("Helvetica", 12, "bold"), wraplength=325).pack(pady=2)
+            ctk.CTkLabel(companyTrendingFrame, text=negativeHeadline, text_color="red", font=("Helvetica", 12, "bold"), wraplength=325).pack(pady=2)
                 
                     
         #assigns url to variable called rankings 
