@@ -377,12 +377,12 @@ class CryptoApp:
         gainersLosersFrame.grid(row=0, column=1, sticky="nsew", padx=10, pady=5)
 
         #creates a label to display the top gainers title within the previously built frame
-        ctk.CTkLabel(gainersLosersFrame, text="Top Gainers 📈 ", text_color="green", font=("Helvetica", 15, "bold")).pack(pady=5)
+        ctk.CTkLabel(gainersLosersFrame, text="Top Gainers ", text_color="green", font=("Helvetica", 15, "bold")).pack(pady=5)
         #creates a label to display the top gainers headlines within the previously built frame
         ctk.CTkLabel(gainersLosersFrame, text="\n".join(displayGainers), font=("Helvetica", 12), text_color="white").pack(pady=5)
 
         #creates a label to display the top losers title within the previously built frame
-        ctk.CTkLabel(gainersLosersFrame, text="Top Losers 📉 ", text_color="red", font=("Helvetica", 15, "bold")).pack(pady=5)
+        ctk.CTkLabel(gainersLosersFrame, text="Top Losers ", text_color="red", font=("Helvetica", 15, "bold")).pack(pady=5)
         #creates a label to display the top losers headlines within the previously built frame
         ctk.CTkLabel(gainersLosersFrame, text="\n".join(displayLosers), font=("Helvetica", 12), text_color="white").pack(pady=5)
         

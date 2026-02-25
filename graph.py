@@ -163,20 +163,20 @@ class CandlesApp(tk.Tk):
 
             #if an error occurs it will print it out in an easy to pinpoint way
             except Exception as e:
-                print(f"❌ Error processing message : {e}")
+                print(f"Error processing message : {e}")
 
         #prints in the terminal when the websocket connection open to ensure everything is working
         def onOpen(ws): #define a function for when the websocket opens
-            print("🌐 WebSocket connection opened : ")
+            print("WebSocket connection opened : ")
 
         #define a function for when the websocket is closed
         def onClose(ws, closeStatusCode=None, closeMsg=None):
             if closeStatusCode:
                 #prints the status code if there is one
-                print(f"❌ WebSocket closed with status code : {closeStatusCode}")
+                print(f"WebSocket closed with status code : {closeStatusCode}")
                 self.quit() #quits the program
             elif closeMsg:
-                print(f"❌ WebSocket closed : {closeMsg}")
+                print(f"WebSocket closed : {closeMsg}")
                 #resets the global flag in case this class is called more than once in one running
                 global flag
                 flag = True
@@ -185,7 +185,7 @@ class CandlesApp(tk.Tk):
                 self.destroy()
             else:
                 #otherwise just close the websocket normally
-                print("❌ WebSocket closed. ")
+                print("WebSocket closed. ")
                 self.quit()
 
         #the websocket stream url that the library connects to
