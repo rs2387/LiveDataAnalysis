@@ -46,7 +46,7 @@ def getHeadlines(tickers: list):
 
 
 #function definition that will return sentiments for each headline for any tickers
-def sentiment(tickers:list):
+def sentiment(tickers:list, testFlag=False, testData=[]):
     #these headlines were scraped using html parser, and recursively passed through external publicly available sentiment 
     #analysis models, as well as chat gpt's analysis and my own analysis to adjust certain headlines'' sentiment scores
     #that may have been produced. the program will then take these as training data to create a vocabulary dictionary
@@ -282,7 +282,10 @@ def sentiment(tickers:list):
     filePath = 'vocabTraining.csv'
 
     #calls a function to get all the headlines, dates and times for a given ticker
-    headlines, dates, times = getHeadlines(tickers)
+    if testFlag == False:
+        headlines, dates, times = getHeadlines(tickers)
+    elif testFlag == True:
+        headlines, dates, times = testData[0], testData[1], testData[2]
 
     #function definition that will take a headline as input and return a list of words
     def preprocess(headline:str):

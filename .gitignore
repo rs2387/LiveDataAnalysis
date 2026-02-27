@@ -17,3 +17,6 @@ Thumbs.db
 # Backup files
 *.bak
 *~
+
+# Ignore my notes file
+notes.py
