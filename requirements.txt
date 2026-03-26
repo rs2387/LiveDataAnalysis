@@ -1,0 +1,10 @@
+requests
+beautifulsoup4
+feedparser
+python-dateutil
+matplotlib
+python-binance
+websocket-client
+bcrypt
+customtkinter
+yfinance

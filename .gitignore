@@ -1,5 +1,5 @@
 # Virtual environment
-plat/
+venv/
 
 # Python compiled files
 __pycache__/
