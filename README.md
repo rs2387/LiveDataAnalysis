@@ -1,4 +1,4 @@
-# LiveDataAnalysis
+# Market Analytics and Prediction Platform
 
 A Python application for real-time data ingestion, sentiment analysis, and visualisation. The project fetches live and historical data via an API and WebSocket, performs sentiment scoring using a trained vocabulary model, stores results in a local SQLite database, and renders dynamic graphs for analysis.
 
@@ -23,9 +23,10 @@ LiveDataAnalysis/
 ├── database.py          # Database setup and query helpers
 ├── database.db          # SQLite database (auto-generated)
 ├── sentiment.py         # Sentiment analysis logic
-├── testSentiment.py     # Unit tests for sentiment module
+├── testSentiment.py     # Tests/ helps train for sentiment module
 ├── graph.py             # Graphing and visualisation utilities
 ├── vocabTraining.csv    # Training vocabulary for the sentiment model
+├── requirements.txt     # Download relevant libraries/ packages
 ├── storage/             # Directory for storing output files
 └── .gitignore
 ```
